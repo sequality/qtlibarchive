@@ -23,22 +23,23 @@ public:
             return;
         }
 
-        std::wstring fileName = filePath.toStdWString();
-        if (archive_write_open_filename_w(_archive, fileName.c_str()) != ARCHIVE_OK) {
-            _error = WriterError::CannotOpenFile;
-            return;
-        }
-
         if (archive_write_set_format(_archive, static_cast<int>(format)) != ARCHIVE_OK) {
             _error = WriterError::CannotSetFormat;
             return;
         }
 
         for (SupportedFilter filter : _filters) {
-            if (archive_write_add_filter(_archive, static_cast<int>(filter)) != ARCHIVE_OK) {
+            // Might also be ARCHIVE_WARN.
+            if (archive_write_add_filter(_archive, static_cast<int>(filter)) == ARCHIVE_FATAL) {
                 _error = WriterError::CannotAddFilter;
                 return;
             }
+        }
+
+        std::wstring fileName = filePath.toStdWString();
+        if (archive_write_open_filename_w(_archive, fileName.c_str()) != ARCHIVE_OK) {
+            _error = WriterError::CannotOpenFile;
+            return;
         }
     }
 

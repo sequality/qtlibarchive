@@ -46,6 +46,11 @@ QList<SupportedFilter> Reader::supportedFilters() const
     return _supportedFilters;
 }
 
+ReaderError Reader::error() const
+{
+    return _error;
+}
+
 qint64 Reader::fileCount()
 {
     if (!_fileCount.has_value()) {

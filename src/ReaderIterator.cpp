@@ -114,7 +114,25 @@ bool ReaderIterator::isValid() const
 
 QByteArray ReaderIterator::readData(std::optional<qint64> maxSize) const
 {
-    return {};
+    Q_D(const ReaderIterator);
+    Q_ASSERT(d->_isValid);
+
+    QByteArray data;
+
+    if (maxSize) {
+        data.resize(*maxSize);
+    } else {
+        auto expectedSize = entry().size();
+
+        if (expectedSize) {
+            data.resize(*expectedSize);
+        }
+    }
+
+    qint64 read = archive_read_data(d->_archive, data.data(), data.size());
+    data.resize(read);
+
+    return data;
 }
 
 ReaderError ReaderIterator::error() const

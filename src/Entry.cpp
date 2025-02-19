@@ -68,6 +68,16 @@ void Entry::setPathName(const QString &pathName)
     archive_entry_set_pathname_utf8(_entry, utf8Data.constData());
 }
 
+std::optional<qint64> Entry::size() const
+{
+    Q_ASSERT(_entry != nullptr);
+    if (!archive_entry_size_is_set(_entry)) {
+        return std::nullopt;
+    }
+
+    return archive_entry_size(_entry);
+}
+
 void Entry::setSize(qint64 size)
 {
     Q_ASSERT(_entry != nullptr);

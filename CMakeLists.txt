@@ -5,16 +5,18 @@ cmake_minimum_required(VERSION 3.21)
 project(QtLibArchive LANGUAGES CXX C)
 
 option(QTLIBARCHIVE_FETCH_LIBARCHIVE "Fetch libarchive from GitHub" ON)
-option(QTLIBARCHIVE_FETCH_LIBARCHIVE_TAG "libarchive version to fetch" "v3.7.7")
+set(QTLIBARCHIVE_FETCH_LIBARCHIVE_TAG "v3.7.7" CACHE STRING "libarchive version to fetch")
 option(QTLIBARCHIVE_BUILD_TESTING "Build QtLibArchive tests" ${PROJECT_IS_TOP_LEVEL})
-option(QTLIBARCHIVE_BUILD_SHARED_LIBS "Build QtLibArchive as shared library" ${BUILD_SHARED_LIBS})
+option(QTLIBARCHIVE_BUILD_SHARED_LIBS "Build QtLibArchive as shared library" ON)
+
+set(CMAKE_AUTOMOC ON)
 
 set(PUBLIC_HEADERS
     include/QtLibArchive/QtLibArchive.h
-        include/QtLibArchive/Entry.h
-        include/QtLibArchive/Reader.h
-        include/QtLibArchive/Writer.h
-        include/QtLibArchive/ReaderIterator.h
+    include/QtLibArchive/Entry.h
+    include/QtLibArchive/Reader.h
+    include/QtLibArchive/Writer.h
+    include/QtLibArchive/ReaderIterator.h
 )
 set(PRIVATE_HEADERS)
 set(SOURCES

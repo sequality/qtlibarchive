@@ -29,6 +29,7 @@ public:
     ReaderIterator &operator=(ReaderIterator &&rhs) noexcept;
 
     [[nodiscard]] std::optional<const Entry> next();
+    void close();
 
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] QByteArray readData(std::optional<qint64> maxSize = std::nullopt) const;

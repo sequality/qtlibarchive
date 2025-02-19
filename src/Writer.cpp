@@ -43,14 +43,6 @@ public:
         }
     }
 
-    ~WriterPrivate()
-    {
-        if (_archive != nullptr) {
-            archive_write_close(_archive);
-            archive_write_free(_archive);
-        }
-    }
-
     QString _filePath;
     SupportedFormat _format{SupportedFormat::Empty};
     QList<SupportedFilter> _filters;
@@ -65,7 +57,10 @@ Writer::Writer(const QString &filePath, SupportedFormat format, SupportedFilter 
     : d_ptr{new WriterPrivate{filePath, format, {filter}}}
 {}
 
-Writer::~Writer() = default;
+Writer::~Writer()
+{
+    close();
+}
 
 bool Writer::writeHeader(const Entry &entry)
 {
@@ -180,6 +175,17 @@ bool Writer::addFile(const QString &sourceFilePath, const QString &targetFilePat
     }
 
     return true;
+}
+
+void Writer::close()
+{
+    Q_D(Writer);
+
+    if (d->_archive) {
+        archive_write_close(d->_archive);
+        archive_write_free(d->_archive);
+        d->_archive = nullptr;
+    }
 }
 
 WriterError Writer::error() const

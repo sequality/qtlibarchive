@@ -62,14 +62,6 @@ public:
         }
     }
 
-    ~ReaderIteratorPrivate()
-    {
-        if (_archive != nullptr) {
-            archive_read_close(_archive);
-            archive_read_free(_archive);
-        }
-    }
-
 private:
     const Reader *_reader{nullptr};
     qint64 _blockSize{10240};
@@ -86,6 +78,7 @@ ReaderIterator::ReaderIterator(ReaderIterator &&other) noexcept
 
 ReaderIterator::~ReaderIterator()
 {
+    close();
 }
 
 ReaderIterator &ReaderIterator::operator=(ReaderIterator &&rhs) noexcept
@@ -104,6 +97,18 @@ std::optional<const Entry> ReaderIterator::next()
 
     d->_isValid = (archive_read_next_header(d->_archive, &d->_archiveEntry) == ARCHIVE_OK);
     return d->_isValid ? std::make_optional(Entry{d->_archiveEntry}) : std::nullopt;
+}
+
+void ReaderIterator::close()
+{
+    Q_D(ReaderIterator);
+
+    if (d->_archive != nullptr) {
+        archive_read_close(d->_archive);
+        archive_read_free(d->_archive);
+        d->_archive = nullptr;
+        d->_isValid = false;
+    }
 }
 
 bool ReaderIterator::isValid() const

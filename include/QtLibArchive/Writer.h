@@ -27,6 +27,8 @@ public:
     bool addDirectory(const QString &path);
     bool addFile(const QString &sourceFilePath, const QString &targetFilePath);
 
+    void close();
+
     [[nodiscard]] WriterError error() const;
     [[nodiscard]] qint64 fileCount() const;
 

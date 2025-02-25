@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2025 sequality software engineering e.U. <office@sequality.at>
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.24)
 project(QtLibArchive LANGUAGES CXX C)
 
 option(QTLIBARCHIVE_FETCH_LIBARCHIVE "Fetch libarchive from GitHub" ON)
@@ -13,17 +13,20 @@ set(CMAKE_AUTOMOC ON)
 
 set(PUBLIC_HEADERS
     include/QtLibArchive/QtLibArchive.h
-    include/QtLibArchive/Entry.h
     include/QtLibArchive/Reader.h
-    include/QtLibArchive/Writer.h
+    include/QtLibArchive/ReaderEntry.h
     include/QtLibArchive/ReaderIterator.h
+    include/QtLibArchive/Writer.h
+    include/QtLibArchive/WriterEntry.h
 )
 set(PRIVATE_HEADERS)
 set(SOURCES
-        src/Reader.cpp
-        src/Entry.cpp
-        src/Writer.cpp
-        src/ReaderIterator.cpp
+    src/QtLibArchive.cpp
+    src/Reader.cpp
+    src/ReaderEntry.cpp
+    src/ReaderIterator.cpp
+    src/Writer.cpp
+    src/WriterEntry.cpp
 )
 set(LIBARCHIVE_TARGET_NAME "")
 
@@ -51,17 +54,11 @@ else()
     set(LIBARCHIVE_TARGET_NAME "LibArchive::LibArchive")
 endif()
 
-
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
-if (QTLIBARCHIVE_BUILD_SHARED_LIBS)
-    set(QTLIBARCHIVE_LIBRARY_TYPE SHARED)
-else()
-    set(QTLIBARCHIVE_LIBRARY_TYPE STATIC)
-endif()
+set(BUILD_SHARED_LIBS ${QTLIBARCHIVE_BUILD_SHARED_LIBS})
 
-add_library(qtlibarchive ${QTLIBARCHIVE_LIBRARY_TYPE} ${SOURCES} ${PUBLIC_HEADERS} ${PRIVATE_HEADERS}
-    src/QtLibArchive.cpp)
+add_library(qtlibarchive ${SOURCES} ${PUBLIC_HEADERS} ${PRIVATE_HEADERS})
 target_link_libraries(qtlibarchive PUBLIC Qt5::Core PRIVATE ${LIBARCHIVE_TARGET_NAME})
 target_compile_features(qtlibarchive PUBLIC cxx_std_17)
 target_compile_definitions(qtlibarchive PRIVATE QTLIBARCHIVE_LIBRARY)
@@ -71,8 +68,8 @@ add_library(Qt::LibArchive ALIAS qtlibarchive)
 
 set_target_properties(qtlibarchive
     PROPERTIES
-        ARCHIVE_OUTPUT_NAME QtLibArchive
-        LIBRARY_OUTPUT_NAME QtLibArchive
+        OUTPUT_NAME QtLibArchive
+        COMPILE_WARNING_AS_ERROR ON
 )
 
 if (WIN32)

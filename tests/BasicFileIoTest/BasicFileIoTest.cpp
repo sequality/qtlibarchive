@@ -32,7 +32,7 @@ void BasicFileIoTest::testCreateTarArchiveAndRead()
 
         QByteArray testData("test data");
 
-        QtLibArchive::Entry entry;
+        QtLibArchive::WriterEntry entry;
         entry.setFileType(QtLibArchive::FileType::Regular);
         entry.setPathName("test.txt");
         entry.setSize(testData.size());

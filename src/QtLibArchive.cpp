@@ -6,7 +6,7 @@
 #include <QDebug>
 
 namespace QtLibArchive {
-constexpr const char *readerErrorStr(ReaderError readerError)
+constexpr const char* readerErrorStr(ReaderError readerError)
 {
     switch (readerError) {
     case ReaderError::None:
@@ -26,7 +26,7 @@ constexpr const char *readerErrorStr(ReaderError readerError)
     return "";
 }
 
-constexpr const char *writerErrorStr(WriterError writerError)
+constexpr const char* writerErrorStr(WriterError writerError)
 {
     switch (writerError) {
     case WriterError::None:

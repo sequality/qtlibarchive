@@ -4,8 +4,8 @@
 #ifndef QTLIBARCHIVE_READERITERATOR_H
 #define QTLIBARCHIVE_READERITERATOR_H
 
-#include <QtLibArchive/Entry.h>
 #include <QtLibArchive/QtLibArchive.h>
+#include <QtLibArchive/ReaderEntry.h>
 
 #include <QFileDevice>
 
@@ -21,14 +21,14 @@ class QTLIBARCHIVE_EXPORT ReaderIterator final
     friend class Reader;
 
 public:
-    ReaderIterator(const ReaderIterator &) = delete;
-    ReaderIterator(ReaderIterator &&other) noexcept;
+    ReaderIterator(const ReaderIterator&) = delete;
+    ReaderIterator(ReaderIterator&& other) noexcept;
     ~ReaderIterator();
 
-    ReaderIterator &operator=(const ReaderIterator &) = delete;
-    ReaderIterator &operator=(ReaderIterator &&rhs) noexcept;
+    ReaderIterator& operator=(const ReaderIterator&) = delete;
+    ReaderIterator& operator=(ReaderIterator&& rhs) noexcept;
 
-    [[nodiscard]] std::optional<const Entry> next();
+    [[nodiscard]] std::optional<ReaderEntry> next();
     void close();
 
     [[nodiscard]] bool isValid() const;
@@ -36,10 +36,10 @@ public:
 
     [[nodiscard]] ReaderError error() const;
 
-    [[nodiscard]] const Entry entry() const;
+    [[nodiscard]] ReaderEntry entry() const;
 
 private:
-    ReaderIterator(const Reader *reader, qint64 blockSize);
+    ReaderIterator(const Reader* reader, qint64 blockSize);
 
     Q_DECLARE_PRIVATE(ReaderIterator);
     std::unique_ptr<ReaderIteratorPrivate> d_ptr;

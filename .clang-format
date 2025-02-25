@@ -84,7 +84,7 @@ PenaltyBreakFirstLessLess: 400
 PenaltyBreakString: 600
 PenaltyExcessCharacter: 50
 PenaltyReturnTypeOnItsOwnLine: 300
-PointerAlignment: Right
+PointerAlignment: Left
 ReflowComments: false
 SortIncludes: CaseSensitive
 SortUsingDeclarations: true

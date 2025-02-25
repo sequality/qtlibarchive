@@ -23,13 +23,9 @@ Reader::Reader(
 Reader::Reader(SupportedFormat supportedFormat, SupportedFilter supportedFilter)
     : _supportedFormats{supportedFormat}
     , _supportedFilters{supportedFilter}
-{
-}
+{}
 
-
-Reader::~Reader()
-{
-}
+Reader::~Reader() {}
 
 QString Reader::fileName() const
 {
@@ -65,7 +61,7 @@ qint64 Reader::fileCount()
     return _fileCount.value();
 }
 
-bool Reader::open(const QString &fileName, qint64 blockSize)
+bool Reader::open(const QString& fileName, qint64 blockSize)
 {
     _fileName = fileName;
     _blockSize = blockSize;
@@ -79,7 +75,7 @@ ReaderIterator Reader::iterator() const
     return ReaderIterator{this, _blockSize};
 }
 
-std::optional<QByteArray> Reader::fileData(const QString &pathName) const
+std::optional<QByteArray> Reader::fileData(const QString& pathName) const
 {
     QString cleanPathName = QDir::cleanPath(pathName);
 

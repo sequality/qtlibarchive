@@ -3,8 +3,10 @@
 
 #include <QtLibArchive/Writer.h>
 
-#include <archive.h>
+#include <QBuffer>
 #include <QFileInfo>
+
+#include <archive.h>
 
 namespace QtLibArchive {
 class WriterPrivate
@@ -12,7 +14,7 @@ class WriterPrivate
     friend class Writer;
 
 public:
-    WriterPrivate(const QString &filePath, SupportedFormat format, QList<SupportedFilter> filters)
+    WriterPrivate(const QString& filePath, SupportedFormat format, QList<SupportedFilter> filters)
         : _filePath{filePath}
         , _format{format}
         , _filters{std::move(filters)}
@@ -50,10 +52,10 @@ public:
     qint64 _fileCount{0};
     qint64 _blockSize{10240};
 
-    archive *_archive{nullptr};
+    archive* _archive{nullptr};
 };
 
-Writer::Writer(const QString &filePath, SupportedFormat format, SupportedFilter filter)
+Writer::Writer(const QString& filePath, SupportedFormat format, SupportedFilter filter)
     : d_ptr{new WriterPrivate{filePath, format, {filter}}}
 {}
 
@@ -62,7 +64,7 @@ Writer::~Writer()
     close();
 }
 
-bool Writer::writeHeader(const Entry &entry)
+bool Writer::writeHeader(const WriterEntry& entry)
 {
     Q_D(Writer);
 
@@ -86,7 +88,7 @@ bool Writer::writeHeader(const Entry &entry)
     return true;
 }
 
-bool Writer::writeData(const QByteArray &data)
+bool Writer::writeData(const QByteArray& data)
 {
     Q_D(Writer);
 
@@ -104,7 +106,7 @@ bool Writer::writeData(const QByteArray &data)
     return true;
 }
 
-bool Writer::writeData(QIODevice *device)
+bool Writer::writeData(QIODevice* device)
 {
     Q_D(Writer);
 
@@ -123,7 +125,7 @@ bool Writer::writeData(QIODevice *device)
     return true;
 }
 
-bool Writer::addDirectory(const QString &path)
+bool Writer::addDirectory(const QString& path, QFileDevice::Permissions permissions)
 {
     Q_D(Writer);
 
@@ -131,14 +133,16 @@ bool Writer::addDirectory(const QString &path)
         return false;
     }
 
-    Entry archiveEntry;
+    WriterEntry archiveEntry;
     archiveEntry.setFileType(FileType::Dir);
     archiveEntry.setPathName(path);
+    archiveEntry.setPermissions(permissions);
 
     return writeHeader(archiveEntry);
 }
 
-bool Writer::addFile(const QString &sourceFilePath, const QString &targetFilePath)
+bool Writer::addFile(
+    const QString& pathInArchive, QIODevice* device, QFileDevice::Permissions permissions)
 {
     Q_D(Writer);
 
@@ -146,22 +150,13 @@ bool Writer::addFile(const QString &sourceFilePath, const QString &targetFilePat
         return false;
     }
 
-    QFileInfo sourceFileInfo{sourceFilePath};
-
-    if (!sourceFileInfo.isFile()) {
-        d->_error = WriterError::UnexpectedFileType;
-        return false;
-    }
-
-    Entry archiveEntry;
+    WriterEntry archiveEntry;
     archiveEntry.setFileType(FileType::Regular);
-    archiveEntry.setPathName(targetFilePath);
-    archiveEntry.setPermissions(sourceFileInfo.permissions());
-    archiveEntry.setSize(sourceFileInfo.size());
+    archiveEntry.setPathName(pathInArchive);
+    archiveEntry.setPermissions(permissions);
+    archiveEntry.setSize(device->size());
 
-    QFile sourceFile{sourceFilePath};
-
-    if (!sourceFile.open(QIODevice::ReadOnly)) {
+    if (!device->isOpen() && !device->open(QIODevice::ReadOnly)) {
         d->_error = WriterError::CannotOpenFile;
         return false;
     }
@@ -170,11 +165,20 @@ bool Writer::addFile(const QString &sourceFilePath, const QString &targetFilePat
         return false;
     }
 
-    if (!writeData(&sourceFile)) {
+    if (!writeData(device)) {
         return false;
     }
 
     return true;
+}
+
+bool Writer::addFile(
+    const QString& pathInArchive, const QByteArray& data, QFileDevice::Permissions permissions)
+{
+    QBuffer buffer;
+    buffer.setData(data);
+
+    return addFile(pathInArchive, &buffer, permissions);
 }
 
 void Writer::close()

@@ -4,10 +4,10 @@
 #ifndef QTLIBARCHIVE_ARCHIVEWRITER_H
 #define QTLIBARCHIVE_ARCHIVEWRITER_H
 
-#include <QString>
 #include <QIODevice>
+#include <QString>
 
-#include <QtLibArchive/Entry.h>
+#include <QtLibArchive/WriterEntry.h>
 
 #include <memory>
 
@@ -17,15 +17,35 @@ class WriterPrivate;
 class QTLIBARCHIVE_EXPORT Writer final
 {
 public:
-    explicit Writer(const QString &filePath, SupportedFormat format, SupportedFilter filter);
+    [[nodiscard]] constexpr static QFileDevice::Permissions defaultRegularFilePermissions()
+    {
+        return QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup
+               | QFileDevice::ReadOther;
+    }
+
+    [[nodiscard]] constexpr static QFileDevice::Permissions defaultDirectoryPermissions()
+    {
+        return QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner
+               | QFileDevice::ReadGroup | QFileDevice::ExeGroup | QFileDevice::ReadOther
+               | QFileDevice::ExeOther;
+    }
+
+    explicit Writer(const QString& filePath, SupportedFormat format, SupportedFilter filter);
     ~Writer();
 
-    bool writeHeader(const Entry& entry);
+    bool writeHeader(const WriterEntry& entry);
     bool writeData(const QByteArray& data);
-    bool writeData(QIODevice *device);
+    bool writeData(QIODevice* device);
 
-    bool addDirectory(const QString &path);
-    bool addFile(const QString &sourceFilePath, const QString &targetFilePath);
+    bool addDirectory(const QString& path, QFileDevice::Permissions = defaultDirectoryPermissions());
+    bool addFile(
+        const QString& pathInArchive,
+        QIODevice* device,
+        QFileDevice::Permissions permissions = defaultRegularFilePermissions());
+    bool addFile(
+        const QString& pathInArchive,
+        const QByteArray& data,
+        QFileDevice::Permissions permissions = defaultRegularFilePermissions());
 
     void close();
 

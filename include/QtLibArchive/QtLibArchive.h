@@ -15,8 +15,7 @@
 #endif
 
 namespace QtLibArchive {
-enum class SupportedFilter
-{
+enum class SupportedFilter {
     None,
     Gzip,
     Bzip2,
@@ -36,8 +35,7 @@ enum class SupportedFilter
     All = -1,
 };
 
-enum class SupportedFormat
-{
+enum class SupportedFormat {
     Cpio = 0x10000,
     CpioPosix = (Cpio | 1),
     CpioBinLe = (Cpio | 2),
@@ -80,8 +78,7 @@ enum class SupportedFormat
     All = -1,
 };
 
-enum class FileType
-{
+enum class FileType {
     Reg = 0100000,
     Lnk = 0120000,
     Sock = 0140000,
@@ -101,8 +98,7 @@ enum class FileType
     Unknown = std::numeric_limits<std::underlying_type_t<FileType>>::max()
 };
 
-enum class ReaderError
-{
+enum class ReaderError {
     None,
     CannotAllocateMemory,
     FormatNotSupported,

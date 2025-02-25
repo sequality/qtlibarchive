@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Copyright (C) 2025 sequality software engineering e.U. <office@sequality.at>
 
-#include <QtLibArchive/ReaderIterator.h>
 #include <QtLibArchive/Reader.h>
+#include <QtLibArchive/ReaderIterator.h>
 
 #include <archive.h>
 #include <archive_entry.h>
@@ -17,10 +17,10 @@ class ReaderIteratorPrivate
     friend class ReaderIterator;
 
 public:
-    ReaderIteratorPrivate(const Reader *reader, qint64 blockSize)
+    ReaderIteratorPrivate(const Reader* reader, qint64 blockSize)
         : _reader{reader}
-          , _blockSize{blockSize}
-          , _archive{archive_read_new()}
+        , _blockSize{blockSize}
+        , _archive{archive_read_new()}
     {
         Q_ASSERT(reader != nullptr);
 
@@ -33,8 +33,8 @@ public:
             archive_read_support_format_all(_archive);
         } else {
             for (SupportedFormat format : reader->supportedFormats()) {
-                if (archive_read_support_format_by_code(_archive, static_cast<int>(format)) !=
-                    ARCHIVE_OK) {
+                if (archive_read_support_format_by_code(_archive, static_cast<int>(format))
+                    != ARCHIVE_OK) {
                     _error = ReaderError::FormatNotSupported;
                     break;
                 }
@@ -45,8 +45,8 @@ public:
             archive_read_support_filter_all(_archive);
         } else {
             for (SupportedFilter filter : reader->supportedFilters()) {
-                if (archive_read_support_filter_by_code(_archive, static_cast<int>(filter)) !=
-                    ARCHIVE_OK) {
+                if (archive_read_support_filter_by_code(_archive, static_cast<int>(filter))
+                    != ARCHIVE_OK) {
                     _error = ReaderError::FilterNotSupported;
                     break;
                 }
@@ -54,24 +54,22 @@ public:
         }
 
         if (archive_read_open_filename_w(
-                _archive,
-                reader->fileName().toStdWString().c_str(),
-                _blockSize) !=
-            ARCHIVE_OK) {
+                _archive, reader->fileName().toStdWString().c_str(), _blockSize)
+            != ARCHIVE_OK) {
             _error = ReaderError::CannotOpenFile;
         }
     }
 
 private:
-    const Reader *_reader{nullptr};
+    const Reader* _reader{nullptr};
     qint64 _blockSize{10240};
-    archive *_archive{nullptr};
-    archive_entry *_archiveEntry{nullptr};
+    archive* _archive{nullptr};
+    archive_entry* _archiveEntry{nullptr};
     bool _isValid{false};
     ReaderError _error{ReaderError::None};
 };
 
-ReaderIterator::ReaderIterator(ReaderIterator &&other) noexcept
+ReaderIterator::ReaderIterator(ReaderIterator&& other) noexcept
 {
     std::swap(d_ptr, other.d_ptr);
 }
@@ -81,7 +79,7 @@ ReaderIterator::~ReaderIterator()
     close();
 }
 
-ReaderIterator &ReaderIterator::operator=(ReaderIterator &&rhs) noexcept
+ReaderIterator& ReaderIterator::operator=(ReaderIterator&& rhs) noexcept
 {
     if (this == &rhs) {
         return *this;
@@ -91,12 +89,12 @@ ReaderIterator &ReaderIterator::operator=(ReaderIterator &&rhs) noexcept
     return *this;
 }
 
-std::optional<const Entry> ReaderIterator::next()
+std::optional<ReaderEntry> ReaderIterator::next()
 {
     Q_D(ReaderIterator);
 
     d->_isValid = (archive_read_next_header(d->_archive, &d->_archiveEntry) == ARCHIVE_OK);
-    return d->_isValid ? std::make_optional(Entry{d->_archiveEntry}) : std::nullopt;
+    return d->_isValid ? std::make_optional(ReaderEntry{d->_archiveEntry}) : std::nullopt;
 }
 
 void ReaderIterator::close()
@@ -146,14 +144,13 @@ ReaderError ReaderIterator::error() const
     return d->_error;
 }
 
-const Entry ReaderIterator::entry() const
+ReaderEntry ReaderIterator::entry() const
 {
     Q_D(const ReaderIterator);
-    return Entry{d->_archiveEntry};
+    return ReaderEntry{d->_archiveEntry};
 }
 
-ReaderIterator::ReaderIterator(const Reader *reader, qint64 blockSize)
+ReaderIterator::ReaderIterator(const Reader* reader, qint64 blockSize)
     : d_ptr{new ReaderIteratorPrivate{reader, blockSize}}
-{
-}
-}
+{}
+} // namespace QtLibArchive

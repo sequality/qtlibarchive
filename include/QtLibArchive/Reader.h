@@ -4,9 +4,9 @@
 #ifndef QTLIBARCHIVE_ARCHIVEREADER_H
 #define QTLIBARCHIVE_ARCHIVEREADER_H
 
-#include <QtLibArchive/Entry.h>
-#include <QtLibArchive/ReaderIterator.h>
 #include <QtLibArchive/QtLibArchive.h>
+#include <QtLibArchive/ReaderEntry.h>
+#include <QtLibArchive/ReaderIterator.h>
 
 #include <QList>
 
@@ -21,9 +21,7 @@ public:
         QList<SupportedFormat> supportedFormats = {SupportedFormat::All},
         QList<SupportedFilter> supportedFilters = {SupportedFilter::All});
 
-    explicit Reader(
-        SupportedFormat supportedFormat,
-        SupportedFilter supportedFilter);
+    explicit Reader(SupportedFormat supportedFormat, SupportedFilter supportedFilter);
 
     ~Reader();
 
@@ -33,11 +31,11 @@ public:
     [[nodiscard]] ReaderError error() const;
     [[nodiscard]] qint64 fileCount();
 
-    bool open(const QString &fileName, qint64 blockSize = 10240);
+    bool open(const QString& fileName, qint64 blockSize = 10240);
 
     [[nodiscard]] ReaderIterator iterator() const;
 
-    [[nodiscard]] std::optional<QByteArray> fileData(const QString &pathName) const;
+    [[nodiscard]] std::optional<QByteArray> fileData(const QString& pathName) const;
 
 private:
     QString _fileName;

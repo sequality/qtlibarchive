@@ -60,18 +60,18 @@ void WriterEntry::setPermissions(QFileDevice::Permissions permissions)
     mode_t mode{};
 
     static const QList<QPair<QFile::Permission, int>> Mapping{
-        {QFile::ReadUser, S_IRUSR},
-        {QFile::WriteUser, S_IWUSR},
-        {QFile::ExeUser, S_IXUSR},
-        {QFile::ReadGroup, S_IRGRP},
-        {QFile::WriteGroup, S_IWGRP},
-        {QFile::ExeGroup, S_IXGRP},
-        {QFile::ReadOther, S_IROTH},
-        {QFile::WriteOther, S_IWOTH},
-        {QFile::ExeOther, S_IXOTH}};
+        {QFileDevice::ReadOwner, S_IRUSR},
+        {QFileDevice::WriteOwner, S_IWUSR},
+        {QFileDevice::ExeOwner, S_IXUSR},
+        {QFileDevice::ReadGroup, S_IRGRP},
+        {QFileDevice::WriteGroup, S_IWGRP},
+        {QFileDevice::ExeGroup, S_IXGRP},
+        {QFileDevice::ReadOther, S_IROTH},
+        {QFileDevice::WriteOther, S_IWOTH},
+        {QFileDevice::ExeOther, S_IXOTH}};
 
     for (auto [permission, mask] : Mapping) {
-        if (permissions & permission) {
+        if (permissions.testFlag(permission)) {
             mode |= mask;
         }
     }

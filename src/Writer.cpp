@@ -125,6 +125,17 @@ bool Writer::writeData(QIODevice* device)
     return true;
 }
 
+bool Writer::finishEntry()
+{
+    Q_D(Writer);
+
+    if (d->_error != WriterError::None) {
+        return false;
+    }
+
+    return archive_write_finish_entry(d->_archive) == ARCHIVE_OK;
+}
+
 bool Writer::addDirectory(const QString& path, QFileDevice::Permissions permissions)
 {
     Q_D(Writer);

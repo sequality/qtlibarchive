@@ -77,16 +77,16 @@ std::optional<QFileDevice::Permissions> ReaderEntry::permissions() const
 
     auto mode = archive_entry_perm(_entry);
 
-    static const QList<QPair<int, QFile::Permission>> Mapping{
-        {S_IRUSR, QFile::ReadUser},
-        {S_IWUSR, QFile::WriteUser},
-        {S_IXUSR, QFile::ExeUser},
-        {S_IRGRP, QFile::ReadGroup},
-        {S_IWGRP, QFile::WriteGroup},
-        {S_IXGRP, QFile::ExeGroup},
-        {S_IROTH, QFile::ReadOther},
-        {S_IWOTH, QFile::WriteOther},
-        {S_IXOTH, QFile::ExeOther}};
+    static const QList<QPair<int, QFileDevice::Permission>> Mapping{
+        {S_IRUSR, QFileDevice::ReadOwner},
+        {S_IWUSR, QFileDevice::WriteOwner},
+        {S_IXUSR, QFileDevice::ExeOwner},
+        {S_IRGRP, QFileDevice::ReadGroup},
+        {S_IWGRP, QFileDevice::WriteGroup},
+        {S_IXGRP, QFileDevice::ExeGroup},
+        {S_IROTH, QFileDevice::ReadOther},
+        {S_IWOTH, QFileDevice::WriteOther},
+        {S_IXOTH, QFileDevice::ExeOther}};
 
     for (auto [mask, permission] : Mapping) {
         if (mode & mask) {

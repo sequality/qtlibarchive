@@ -36,6 +36,7 @@ public:
     bool writeHeader(const WriterEntry& entry);
     bool writeData(const QByteArray& data);
     bool writeData(QIODevice* device);
+    bool finishEntry();
 
     bool addDirectory(const QString& path, QFileDevice::Permissions = defaultDirectoryPermissions());
     bool addFile(

@@ -31,6 +31,20 @@ constexpr const char* writerErrorStr(WriterError writerError)
     switch (writerError) {
     case WriterError::None:
         return "None";
+    case WriterError::CannotAllocateMemory:
+        return "CannotAllocateMemory";
+    case WriterError::CannotOpenFile:
+        return "CannotOpenFile";
+    case WriterError::CannotSetFormat:
+        return "CannotSetFormat";
+    case WriterError::CannotAddFilter:
+        return "CannotAddFilter";
+    case WriterError::CannotWriteHeader:
+        return "CannotWriteHeader";
+    case WriterError::CannotWriteData:
+        return "CannotWriteData";
+    case WriterError::InvalidEntry:
+        return "InvalidEntry";
     }
 
     return "";

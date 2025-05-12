@@ -117,8 +117,7 @@ enum class WriterError {
     CannotAddFilter,
     CannotWriteHeader,
     CannotWriteData,
-    InvalidEntry,
-    UnexpectedFileType,
+    InvalidEntry,    
 };
 
 QTLIBARCHIVE_EXPORT QDebug operator<<(QDebug dbg, WriterError error);

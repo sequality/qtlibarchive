@@ -50,6 +50,20 @@ std::optional<qint64> ReaderEntry::size() const
     return archive_entry_size(_entry);
 }
 
+std::optional<QDateTime> ReaderEntry::mtime() const
+{
+    Q_ASSERT(_entry != nullptr);
+
+    if (!archive_entry_mtime_is_set(_entry)) {
+        return std::nullopt;
+    }
+
+    time_t time = archive_entry_mtime(_entry);
+    long nsec = archive_entry_mtime_nsec(_entry);
+
+    return QDateTime::fromTime_t(time).addMSecs(nsec / 1000000);
+}
+
 bool ReaderEntry::isValid() const
 {
     return _entry != nullptr;

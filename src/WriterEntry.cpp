@@ -80,4 +80,15 @@ void WriterEntry::setPermissions(QFileDevice::Permissions permissions)
     archive_entry_set_perm(_entry, mode);
 }
 
+void WriterEntry::setMtime(const QDateTime& mtime)
+{
+    Q_ASSERT(_entry != nullptr);
+
+    // time_t contains seconds since epoch. QDateTime has milliseconds resolution.
+    // We need to convert the rest of the milliseconds to nanoseconds.
+    long nsec = (mtime.toMSecsSinceEpoch() - mtime.toSecsSinceEpoch() * 1000) * 1000000;
+
+    archive_entry_set_mtime(_entry, mtime.toTime_t(), nsec);
+}
+
 } // namespace QtLibArchive

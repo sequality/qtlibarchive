@@ -36,8 +36,13 @@ QtLibArchive::FileType ReaderEntry::fileType() const
 std::optional<QString> ReaderEntry::pathName() const
 {
     Q_ASSERT(_entry != nullptr);
-    const char* pathName = archive_entry_pathname_utf8(_entry);
-    return pathName == nullptr ? std::nullopt : std::optional<QString>{QString::fromUtf8(pathName)};
+    const char* pathName = archive_entry_pathname(_entry);
+    if (pathName != nullptr) {
+        // If the file name was not UTF-8-encoded, there might be invalid characters.
+        return QString::fromUtf8(pathName);
+    }
+
+    return std::nullopt;
 }
 
 std::optional<qint64> ReaderEntry::size() const

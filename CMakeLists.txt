@@ -45,6 +45,11 @@ if (QTLIBARCHIVE_FETCH_LIBARCHIVE)
     set(ENABLE_CAT OFF)
     set(ENABLE_TEST OFF)
     set(ENABLE_UNZIP OFF)
+
+    if (CMAKE_VERSION VERSION_GREATER_EQUAL "4.0")
+        set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+    endif()
+
     FetchContent_MakeAvailable(LibArchive)
 
     target_compile_options(archive_static PRIVATE -fPIC)
